@@ -25,7 +25,7 @@ export function QueryGroup({ group, isRoot = false }: Props) {
       {/* render each condition */}
       {group.conditions.map(condition => {
         if (isGroup(condition)) {
-          // THIS IS THE RECURSION — QueryGroup renders QueryGroup
+          //  QueryGroup renders QueryGroup
           return <QueryGroup key={condition.id} group={condition} />
         }
         return (
