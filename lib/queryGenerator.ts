@@ -3,19 +3,17 @@ import { Group, isGroup } from "@/types"
 export function generateMongoDB(group: Group): object {
   const logic = group.logic === "AND" ? "$and" : "$or"
 
-  const conditions = group.conditions.map(condition => {
+  const conditions = group.conditions.map((condition) => {
     if (isGroup(condition)) {
-      // thia is recursion.... if it's a group, call this function again on it
       return generateMongoDB(condition)
     }
 
-    // it's a rule, convert to MongoDB syntax
     const operatorMap: Record<string, string> = {
-      "equals":       "",       // { field: value }
+      "equals": "",
       "greater than": "$gt",
-      "less than":    "$lt",
-      "not equals":   "$ne",
-      "contains":     "$regex",
+      "less than": "$lt",
+      "not equals": "$ne",
+      "contains": "$regex",
     }
 
     const op = operatorMap[condition.operator]
