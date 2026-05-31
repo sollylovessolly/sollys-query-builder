@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { mockDataset, schema } from "@/lib/mockData"
+import { queryPresets } from "@/lib/queryPresets"
 import { useQueryStore } from "@/store/queryStore"
 import { Group, isGroup } from "@/types"
 
@@ -23,6 +24,7 @@ function countNodes(group: Group): number {
 export function LeftPanel() {
   const [activeTab, setActiveTab] = useState<SidebarTab>("Schema")
   const history = useQueryStore((state) => state.history)
+  const loadQuery = useQueryStore((state) => state.loadQuery)
   const restoreHistory = useQueryStore((state) => state.restoreHistory)
   const clearHistory = useQueryStore((state) => state.clearHistory)
   const recentHistory = history.slice(0, 5)
@@ -113,14 +115,24 @@ export function LeftPanel() {
           <section>
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Presets</p>
-              <span className="text-xs text-zinc-600">Coming next</span>
+              <span className="text-xs text-zinc-600">{queryPresets.length} saved</span>
             </div>
 
-            <div className="mt-3 rounded border border-dashed border-zinc-800 bg-zinc-900/40 p-3">
-              <p className="text-xs leading-5 text-zinc-500">
-                Saved query presets will live here, so the sidebar stays organized as we add more
-                advanced interactions.
-              </p>
+            <div className="mt-3 space-y-2">
+              {queryPresets.map((preset) => (
+                <button
+                  key={preset.id}
+                  onClick={() => loadQuery(preset.tree)}
+                  className="w-full rounded border border-zinc-800 bg-zinc-900/60 p-3 text-left hover:border-zinc-600"
+                >
+                  <span className="block text-sm font-medium text-zinc-200">{preset.name}</span>
+                  <span className="mt-1 block text-xs leading-5 text-zinc-500">{preset.description}</span>
+                  <span className="mt-2 block text-[11px] text-zinc-600">
+                    {preset.tree.logic} / {countNodes(preset.tree)} node
+                    {countNodes(preset.tree) === 1 ? "" : "s"}
+                  </span>
+                </button>
+              ))}
             </div>
           </section>
         )}
