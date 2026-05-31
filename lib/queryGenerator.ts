@@ -1,4 +1,4 @@
-import { Group, Rule, isGroup } from "@/types"
+import { Group, isGroup } from "@/types"
 
 export function generateMongoDB(group: Group): object {
   const logic = group.logic === "AND" ? "$and" : "$or"
