@@ -15,6 +15,8 @@ export function QueryGroup({ group, isRoot = false }: Props) {
   const updateRule = useQueryStore((state) => state.updateRule)
   const removeNode = useQueryStore((state) => state.removeNode)
   const toggleLogic = useQueryStore((state) => state.toggleLogic)
+  const toggleGroupCollapsed = useQueryStore((state) => state.toggleGroupCollapsed)
+  const isCollapsed = useQueryStore((state) => state.collapsedGroupIds.includes(group.id))
   const isEmpty = group.conditions.length === 0
 
   return (
@@ -24,6 +26,13 @@ export function QueryGroup({ group, isRoot = false }: Props) {
       }`}
     >
       <div className="mb-3 flex items-center gap-2">
+        <button
+          onClick={() => toggleGroupCollapsed(group.id)}
+          className="rounded border border-zinc-800 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
+          aria-label={isCollapsed ? "Expand group" : "Collapse group"}
+        >
+          {isCollapsed ? "+" : "-"}
+        </button>
         <span className="text-xs text-zinc-500">Match</span>
         <button
           onClick={() => group.logic === "OR" && toggleLogic(group.id)}
@@ -42,6 +51,10 @@ export function QueryGroup({ group, isRoot = false }: Props) {
           OR
         </button>
 
+        <span className="text-xs text-zinc-600">
+          {group.conditions.length} node{group.conditions.length === 1 ? "" : "s"}
+        </span>
+
         {!isRoot && (
           <button
             onClick={() => removeNode(group.id)}
@@ -52,7 +65,12 @@ export function QueryGroup({ group, isRoot = false }: Props) {
         )}
       </div>
 
-      {isEmpty ? (
+      {isCollapsed ? (
+        <div className="rounded border border-dashed border-zinc-800 bg-zinc-950/60 px-3 py-2 text-xs text-zinc-500">
+          Group collapsed. {group.conditions.length} nested node
+          {group.conditions.length === 1 ? "" : "s"} hidden.
+        </div>
+      ) : isEmpty ? (
         <div className="rounded border border-dashed border-amber-900/70 bg-amber-950/20 p-4">
           <p className="text-sm font-medium text-amber-200">
             {isRoot ? "Your root query is empty." : "This nested group is empty."}
@@ -94,20 +112,22 @@ export function QueryGroup({ group, isRoot = false }: Props) {
         </div>
       )}
 
-      <div className="mt-3 flex gap-2">
-        <button
-          onClick={() => addRule(group.id)}
-          className="rounded border border-dashed border-zinc-700 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
-        >
-          + Add rule
-        </button>
-        <button
-          onClick={() => addGroup(group.id)}
-          className="rounded border border-dashed border-zinc-700 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
-        >
-          + Add group
-        </button>
-      </div>
+      {!isCollapsed && (
+        <div className="mt-3 flex gap-2">
+          <button
+            onClick={() => addRule(group.id)}
+            className="rounded border border-dashed border-zinc-700 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
+          >
+            + Add rule
+          </button>
+          <button
+            onClick={() => addGroup(group.id)}
+            className="rounded border border-dashed border-zinc-700 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
+          >
+            + Add group
+          </button>
+        </div>
+      )}
     </div>
   )
 }

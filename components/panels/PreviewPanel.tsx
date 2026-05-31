@@ -10,10 +10,12 @@ export function PreviewPanel() {
   const tree = useQueryStore((state) => state.tree)
   const isRunning = useQueryStore((state) => state.isRunning)
   const results = useQueryStore((state) => state.results)
+  const lastRunAt = useQueryStore((state) => state.lastRunAt)
   const runQuery = useQueryStore((state) => state.runQuery)
   const generatedQuery = generateMongoDB(tree)
   const formattedQuery = JSON.stringify(generatedQuery, null, 2)
   const validation = validateQuery(tree)
+  const hasExecuted = lastRunAt !== null
 
   return (
     <section className="min-h-0 overflow-auto bg-zinc-950 p-4">
@@ -46,7 +48,7 @@ export function PreviewPanel() {
             </div>
             <div className="flex items-center justify-between gap-3">
               <dt className="text-zinc-500">Results</dt>
-              <dd className="font-medium text-zinc-300">{results.length}</dd>
+              <dd className="font-medium text-zinc-300">{hasExecuted ? results.length : "-"}</dd>
             </div>
             <div className="flex items-center justify-between gap-3">
               <dt className="text-zinc-500">Validation</dt>
@@ -87,7 +89,11 @@ export function PreviewPanel() {
               <div className="p-4 text-sm text-zinc-500">Filtering mock dataset...</div>
             ) : results.length === 0 ? (
               <div className="p-4 text-sm text-zinc-500">
-                {validation.isValid ? "Run the query to inspect matching rows." : "Fix validation issues before running."}
+                {validation.isValid && hasExecuted
+                  ? "No rows matched this query."
+                  : validation.isValid
+                    ? "Run the query to inspect matching rows."
+                    : "Fix validation issues before running."}
               </div>
             ) : (
               <div className="overflow-auto">

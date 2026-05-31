@@ -8,6 +8,7 @@ import { nanoid } from "nanoid"
 interface QueryStore {
   tree: Group
   history: Group[]
+  collapsedGroupIds: string[]
   isRunning: boolean
   results: QueryRow[]
   lastRunAt: number | null
@@ -15,6 +16,7 @@ interface QueryStore {
   addGroup: (groupId: string) => void
   updateRule: (ruleId: string, changes: Partial<Rule>) => void
   removeNode: (nodeId: string) => void
+  toggleGroupCollapsed: (groupId: string) => void
   toggleLogic: (groupId: string) => void
   runQuery: () => void
 }
@@ -105,6 +107,7 @@ function removeNodeById(group: Group, nodeId: string): Group {
 export const useQueryStore = create<QueryStore>((set) => ({
   tree: initialTree,
   history: [],
+  collapsedGroupIds: [],
   isRunning: false,
   results: [],
   lastRunAt: null,
@@ -115,6 +118,8 @@ export const useQueryStore = create<QueryStore>((set) => ({
         conditions: [...group.conditions, createRule()],
       })),
       history: [tree, ...history],
+      results: [],
+      lastRunAt: null,
     })),
   addGroup: (groupId) =>
     set(({ tree, history }) => ({
@@ -123,16 +128,29 @@ export const useQueryStore = create<QueryStore>((set) => ({
         conditions: [...group.conditions, createGroup()],
       })),
       history: [tree, ...history],
+      results: [],
+      lastRunAt: null,
     })),
   updateRule: (ruleId, changes) =>
     set(({ tree, history }) => ({
       tree: updateRuleById(tree, ruleId, changes),
       history: [tree, ...history],
+      results: [],
+      lastRunAt: null,
     })),
   removeNode: (nodeId) =>
-    set(({ tree, history }) => ({
+    set(({ tree, history, collapsedGroupIds }) => ({
       tree: removeNodeById(tree, nodeId),
       history: [tree, ...history],
+      collapsedGroupIds: collapsedGroupIds.filter((id) => id !== nodeId),
+      results: [],
+      lastRunAt: null,
+    })),
+  toggleGroupCollapsed: (groupId) =>
+    set(({ collapsedGroupIds }) => ({
+      collapsedGroupIds: collapsedGroupIds.includes(groupId)
+        ? collapsedGroupIds.filter((id) => id !== groupId)
+        : [...collapsedGroupIds, groupId],
     })),
   toggleLogic: (groupId) =>
     set(({ tree, history }) => ({
@@ -141,6 +159,8 @@ export const useQueryStore = create<QueryStore>((set) => ({
         logic: group.logic === "AND" ? "OR" : "AND",
       })),
       history: [tree, ...history],
+      results: [],
+      lastRunAt: null,
     })),
   runQuery: () => {
     set({ isRunning: true })
