@@ -1,11 +1,16 @@
 import { create } from "zustand"
-import { schema } from "@/lib/mockData"
+import { executeQuery, QueryRow } from "@/lib/queryExecutor"
+import { mockDataset, schema } from "@/lib/mockData"
+import { validateQuery } from "@/lib/queryValidator"
 import { Group, Rule, isGroup } from "@/types"
 import { nanoid } from "nanoid"
 
 interface QueryStore {
   tree: Group
   history: Group[]
+  isRunning: boolean
+  results: QueryRow[]
+  lastRunAt: number | null
   addRule: (groupId: string) => void
   addGroup: (groupId: string) => void
   updateRule: (ruleId: string, changes: Partial<Rule>) => void
@@ -100,6 +105,9 @@ function removeNodeById(group: Group, nodeId: string): Group {
 export const useQueryStore = create<QueryStore>((set) => ({
   tree: initialTree,
   history: [],
+  isRunning: false,
+  results: [],
+  lastRunAt: null,
   addRule: (groupId) =>
     set(({ tree, history }) => ({
       tree: updateGroupById(tree, groupId, (group) => ({
@@ -134,5 +142,19 @@ export const useQueryStore = create<QueryStore>((set) => ({
       })),
       history: [tree, ...history],
     })),
-  runQuery: () => undefined,
+  runQuery: () => {
+    set({ isRunning: true })
+
+    window.setTimeout(() => {
+      set(({ tree }) => {
+        const validation = validateQuery(tree)
+
+        return {
+          isRunning: false,
+          results: validation.isValid ? executeQuery(tree, mockDataset) : [],
+          lastRunAt: Date.now(),
+        }
+      })
+    }, 350)
+  },
 }))
