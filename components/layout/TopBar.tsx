@@ -72,15 +72,18 @@ export function TopBar() {
           SQ
         </div>
         <div>
-        <h1 className="text-[15px] font-semibold tracking-tight text-zinc-100">
-          Solly Query Builder
-        </h1>
-        <p className="text-xs text-zinc-500">Visual filters, live syntax, simulated results</p>
+          <h1 className="text-[15px] font-semibold tracking-tight text-zinc-100">
+            Solly Query Builder
+          </h1>
+          <p className="text-xs text-zinc-500">Visual filters, live syntax, simulated results</p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 text-xs text-zinc-500">
         {message && <span className="hidden text-zinc-500 md:inline">{message}</span>}
+        <span className="hidden rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-500 xl:inline">
+          Ctrl Enter run · Ctrl B rule · Ctrl G group
+        </span>
         <input
           ref={inputRef}
           type="file"
