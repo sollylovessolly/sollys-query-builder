@@ -66,12 +66,17 @@ export function TopBar() {
   }
 
   return (
-    <header className="flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4">
-      <div>
-        <h1 className="text-sm font-semibold tracking-wide text-zinc-100">
+    <header className="flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-5">
+      <div className="flex items-center gap-3">
+        <div className="grid size-8 place-items-center rounded-lg border border-zinc-800 bg-zinc-900 text-sm font-black text-rose-500">
+          SQ
+        </div>
+        <div>
+        <h1 className="text-[15px] font-semibold tracking-tight text-zinc-100">
           Solly Query Builder
         </h1>
         <p className="text-xs text-zinc-500">Visual filters, live syntax, simulated results</p>
+        </div>
       </div>
 
       <div className="flex items-center gap-2 text-xs text-zinc-500">
@@ -85,24 +90,24 @@ export function TopBar() {
         />
         <button
           onClick={() => inputRef.current?.click()}
-          className="rounded border border-zinc-800 px-2 py-1 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100"
+          className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100"
         >
           Import JSON
         </button>
         <button
           onClick={exportQuery}
-          className="rounded border border-zinc-800 px-2 py-1 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100"
+          className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100"
         >
           Export JSON
         </button>
         <button
           onClick={toggleTheme}
-          className="rounded border border-zinc-800 px-2 py-1 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100"
+          className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-400 hover:border-rose-800 hover:text-zinc-100"
           aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
         >
           {theme === "dark" ? "Light" : "Dark"}
         </button>
-        <span className="rounded border border-zinc-800 px-2 py-1 text-zinc-400">Draft</span>
+        <span className="rounded-lg border border-rose-950/70 bg-rose-950/20 px-3 py-2 text-rose-300">Draft</span>
         <span>HNG</span>
       </div>
     </header>

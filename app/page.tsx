@@ -5,11 +5,11 @@ import { PreviewPanel } from "@/components/panels/PreviewPanel"
 
 export default function Home() {
   return (
-    <main className="grid h-screen grid-rows-[48px_1fr] bg-background text-foreground">
+    <main className="grid h-screen grid-rows-[58px_1fr] bg-background text-foreground">
       <TopBar />
-      <div className="grid min-h-0 grid-cols-[280px_1fr] overflow-hidden">
+      <div className="grid min-h-0 grid-cols-[316px_1fr] gap-3 overflow-hidden p-3">
         <LeftPanel />
-        <div className="grid min-h-0 grid-rows-2 overflow-hidden">
+        <div className="grid min-h-0 grid-rows-[1fr_1.15fr] gap-3 overflow-hidden">
           <BuilderPanel />
           <PreviewPanel />
         </div>

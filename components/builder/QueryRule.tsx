@@ -13,7 +13,7 @@ interface Props {
 
 export function QueryRule({ rule, onUpdate, onDelete }: Props) {
   return (
-    <div className="flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 p-2">
+    <div className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/80 p-2">
       <span className="cursor-grab text-zinc-600" aria-hidden="true">
         ::
       </span>

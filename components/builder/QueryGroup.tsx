@@ -21,8 +21,8 @@ export function QueryGroup({ group, isRoot = false }: Props) {
 
   return (
     <div
-      className={`rounded-lg border p-3 ${
-        isRoot ? "border-zinc-700" : "ml-4 border-zinc-800 border-l-2 border-l-purple-600"
+      className={`rounded-lg border bg-[#171717]/50 p-3 ${
+        isRoot ? "border-zinc-700" : "ml-4 border-zinc-800 border-l-2 border-l-rose-800"
       }`}
     >
       <div className="mb-3 flex items-center gap-2">
@@ -37,7 +37,7 @@ export function QueryGroup({ group, isRoot = false }: Props) {
         <button
           onClick={() => group.logic === "OR" && toggleLogic(group.id)}
           className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            group.logic === "AND" ? "bg-blue-900 text-blue-300" : "bg-zinc-800 text-zinc-500"
+            group.logic === "AND" ? "bg-rose-950/70 text-rose-200" : "bg-zinc-800 text-zinc-500"
           }`}
         >
           AND
@@ -45,7 +45,7 @@ export function QueryGroup({ group, isRoot = false }: Props) {
         <button
           onClick={() => group.logic === "AND" && toggleLogic(group.id)}
           className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            group.logic === "OR" ? "bg-purple-900 text-purple-300" : "bg-zinc-800 text-zinc-500"
+            group.logic === "OR" ? "bg-rose-950/70 text-rose-200" : "bg-zinc-800 text-zinc-500"
           }`}
         >
           OR
@@ -66,12 +66,12 @@ export function QueryGroup({ group, isRoot = false }: Props) {
       </div>
 
       {isCollapsed ? (
-        <div className="rounded border border-dashed border-zinc-800 bg-zinc-950/60 px-3 py-2 text-xs text-zinc-500">
+        <div className="rounded-lg border border-dashed border-zinc-800 bg-zinc-950/60 px-3 py-2 text-xs text-zinc-500">
           Group collapsed. {group.conditions.length} nested node
           {group.conditions.length === 1 ? "" : "s"} hidden.
         </div>
       ) : isEmpty ? (
-        <div className="rounded border border-dashed border-amber-900/70 bg-amber-950/20 p-4">
+        <div className="rounded-lg border border-dashed border-amber-900/70 bg-amber-950/20 p-4">
           <p className="text-sm font-medium text-amber-200">
             {isRoot ? "Your root query is empty." : "This nested group is empty."}
           </p>

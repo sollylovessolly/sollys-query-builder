@@ -30,26 +30,26 @@ export function LeftPanel() {
   const recentHistory = history.slice(0, 5)
 
   return (
-    <aside className="flex min-h-0 flex-col border-r border-zinc-800 bg-zinc-950 p-4">
+    <aside className="app-panel flex min-h-0 flex-col border p-4">
       <section className="shrink-0">
         <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Data source</p>
-        <div className="mt-3 rounded border border-zinc-800 bg-zinc-900/60 p-3">
+        <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-sm font-semibold text-zinc-100">Users</h2>
               <p className="text-xs text-zinc-500">Mock customer dataset</p>
             </div>
-            <span className="rounded bg-emerald-950 px-2 py-1 text-xs font-medium text-emerald-300">
+            <span className="rounded-lg bg-emerald-950 px-2 py-1 text-xs font-medium text-emerald-300">
               Active
             </span>
           </div>
 
           <dl className="mt-4 grid grid-cols-2 gap-2 text-xs">
-            <div className="rounded border border-zinc-800 bg-zinc-950 p-2">
+            <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-2">
               <dt className="text-zinc-500">Rows</dt>
               <dd className="mt-1 font-semibold text-zinc-200">{mockDataset.length}</dd>
             </div>
-            <div className="rounded border border-zinc-800 bg-zinc-950 p-2">
+            <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-2">
               <dt className="text-zinc-500">Fields</dt>
               <dd className="mt-1 font-semibold text-zinc-200">{fieldEntries.length}</dd>
             </div>
@@ -57,13 +57,13 @@ export function LeftPanel() {
         </div>
       </section>
 
-      <div className="mt-5 grid grid-cols-3 rounded border border-zinc-800 bg-zinc-900/60 p-1">
+      <div className="mt-5 grid grid-cols-3 rounded-lg border border-zinc-800 bg-zinc-950/35 p-1">
         {tabs.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`rounded px-2 py-1.5 text-xs font-medium ${
-              activeTab === tab ? "bg-zinc-700 text-zinc-100" : "text-zinc-500 hover:text-zinc-300"
+            className={`rounded-md px-2 py-1.5 text-xs font-medium ${
+              activeTab === tab ? "bg-rose-950/50 text-rose-200" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
             {tab}
@@ -81,10 +81,10 @@ export function LeftPanel() {
 
             <div className="mt-3 space-y-3">
               {fieldEntries.map(([fieldName, field]) => (
-                <article key={fieldName} className="rounded border border-zinc-800 bg-zinc-900/60 p-3">
+                <article key={fieldName} className="rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-zinc-100">{fieldName}</h3>
-                    <span className="rounded bg-zinc-800 px-2 py-1 text-xs text-zinc-400">
+                    <span className="rounded-lg bg-zinc-800 px-2 py-1 text-xs text-zinc-400">
                       {field.type}
                     </span>
                   </div>
@@ -93,7 +93,7 @@ export function LeftPanel() {
                     {field.operators.map((operator) => (
                       <span
                         key={operator}
-                        className="rounded border border-zinc-800 px-2 py-1 text-[11px] text-zinc-400"
+                        className="rounded-md border border-zinc-800 bg-zinc-900/50 px-2 py-1 text-[11px] text-zinc-400"
                       >
                         {operator}
                       </span>
@@ -123,7 +123,7 @@ export function LeftPanel() {
                 <button
                   key={preset.id}
                   onClick={() => loadQuery(preset.tree)}
-                  className="w-full rounded border border-zinc-800 bg-zinc-900/60 p-3 text-left hover:border-zinc-600"
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-950/35 p-3 text-left hover:border-rose-900/80"
                 >
                   <span className="block text-sm font-medium text-zinc-200">{preset.name}</span>
                   <span className="mt-1 block text-xs leading-5 text-zinc-500">{preset.description}</span>
@@ -148,7 +148,7 @@ export function LeftPanel() {
               )}
             </div>
 
-            <div className="mt-3 rounded border border-zinc-800 bg-zinc-900/60 p-3">
+            <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
               {history.length === 0 ? (
                 <p className="text-xs leading-5 text-zinc-500">
                   Query changes will appear here for quick restore.
@@ -162,7 +162,7 @@ export function LeftPanel() {
                       <button
                         key={`${snapshot.id}-${index}`}
                         onClick={() => restoreHistory(index)}
-                        className="flex w-full items-center justify-between rounded border border-zinc-800 bg-zinc-950 px-3 py-2 text-left hover:border-zinc-600"
+                        className="flex w-full items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-left hover:border-rose-900/80"
                       >
                         <span>
                           <span className="block text-xs font-medium text-zinc-300">

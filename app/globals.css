@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #09090b;
-  --foreground: #f4f4f5;
+  --background: #0f0f0f;
+  --foreground: #f2f2f3;
+  --panel: #242424;
+  --panel-soft: #2f2f2f;
+  --panel-muted: #1f1f1f;
+  --line: #3f3f46;
+  --muted: #a1a1aa;
+  --accent: #be185d;
   color-scheme: dark;
 }
 
@@ -16,13 +22,47 @@
 [data-theme="light"] {
   --background: #f8fafc;
   --foreground: #18181b;
+  --panel: #ffffff;
+  --panel-soft: #f1f5f9;
+  --panel-muted: #e2e8f0;
+  --line: #cbd5e1;
+  --muted: #64748b;
+  --accent: #be185d;
   color-scheme: light;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+* {
+  scrollbar-color: #8b8b91 transparent;
+  scrollbar-width: thin;
+}
+
+::selection {
+  background: rgb(190 24 93 / 0.35);
+}
+
+.app-panel {
+  background: var(--panel);
+  border-color: var(--line);
+  border-radius: 10px;
+}
+
+.app-panel-soft {
+  background: var(--panel-soft);
+  border-color: var(--line);
+}
+
+.app-muted {
+  color: var(--muted);
+}
+
+.app-accent-border {
+  border-color: rgb(190 24 93 / 0.65);
 }
 
 [data-theme="light"] .bg-zinc-950 {

@@ -16,7 +16,7 @@ export function RuleValue({ field, value, onChange }: Props) {
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-sm text-green-400"
+        className="rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1 text-sm text-emerald-300"
       >
         <option value="">Select value</option>
         {fieldSchema.options?.map((option) => (
@@ -33,7 +33,7 @@ export function RuleValue({ field, value, onChange }: Props) {
       type={fieldSchema.type === "number" ? "number" : "text"}
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="w-24 rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-sm text-green-400"
+      className="w-24 rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1 text-sm text-emerald-300"
       placeholder="value"
     />
   )

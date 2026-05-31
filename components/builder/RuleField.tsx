@@ -22,7 +22,7 @@ export function RuleField({ value, onChange }: Props) {
           value: "",
         })
       }}
-      className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-sm text-blue-400"
+      className="rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1 text-sm text-sky-400"
     >
       {Object.keys(schema).map((field) => (
         <option key={field} value={field}>

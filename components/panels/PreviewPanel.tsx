@@ -18,20 +18,20 @@ export function PreviewPanel() {
   const hasExecuted = lastRunAt !== null
 
   return (
-    <section className="min-h-0 overflow-auto bg-zinc-950 p-4">
+    <section className="app-panel min-h-0 overflow-auto border p-4">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-zinc-200">Preview & Results</h2>
+        <h2 className="text-sm font-semibold text-zinc-100">Preview & Results</h2>
         <button
           onClick={runQuery}
           disabled={!validation.isValid || isRunning}
-          className="rounded bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
+          className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
         >
           {isRunning ? "Running..." : "Execute query"}
         </button>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-[240px_1fr]">
-        <div className="rounded border border-zinc-800 bg-zinc-900/60 p-3">
+        <div className="rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Summary</p>
           <dl className="mt-3 space-y-2 text-xs">
             <div className="flex items-center justify-between gap-3">
@@ -75,11 +75,11 @@ export function PreviewPanel() {
             </div>
           )}
 
-          <pre className="min-h-40 overflow-auto rounded border border-zinc-800 bg-zinc-900/60 p-4 font-mono text-xs leading-5 text-emerald-300">
+          <pre className="min-h-40 overflow-auto rounded-lg border border-zinc-800 bg-[#1f1f1f] p-4 font-mono text-xs leading-5 text-emerald-300">
             <code>{formattedQuery}</code>
           </pre>
 
-          <div className="overflow-hidden rounded border border-zinc-800 bg-zinc-900/60">
+          <div className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/35">
             <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
               <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Matching rows</h3>
               <span className="text-xs text-zinc-500">{results.length} row(s)</span>
