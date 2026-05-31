@@ -16,6 +16,8 @@ interface QueryStore {
   addGroup: (groupId: string) => void
   updateRule: (ruleId: string, changes: Partial<Rule>) => void
   removeNode: (nodeId: string) => void
+  restoreHistory: (index: number) => void
+  clearHistory: () => void
   toggleGroupCollapsed: (groupId: string) => void
   toggleLogic: (groupId: string) => void
   runQuery: () => void
@@ -146,6 +148,23 @@ export const useQueryStore = create<QueryStore>((set) => ({
       results: [],
       lastRunAt: null,
     })),
+  restoreHistory: (index) =>
+    set(({ tree, history }) => {
+      const restoredTree = history[index]
+
+      if (!restoredTree) {
+        return {}
+      }
+
+      return {
+        tree: restoredTree,
+        history: [tree, ...history.filter((_, historyIndex) => historyIndex !== index)],
+        collapsedGroupIds: [],
+        results: [],
+        lastRunAt: null,
+      }
+    }),
+  clearHistory: () => set({ history: [] }),
   toggleGroupCollapsed: (groupId) =>
     set(({ collapsedGroupIds }) => ({
       collapsedGroupIds: collapsedGroupIds.includes(groupId)
