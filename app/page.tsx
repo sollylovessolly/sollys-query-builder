@@ -1,14 +1,19 @@
+import { TopBar } from "@/components/layout/TopBar"
+import { BuilderPanel } from "@/components/panels/BuilderPanel"
+import { LeftPanel } from "@/components/panels/LeftPanel"
+import { PreviewPanel } from "@/components/panels/PreviewPanel"
+
 export default function Home() {
   return (
-    <div className="grid grid-rows-[40px_1fr] h-screen bg-zinc-900">
+    <main className="grid h-screen grid-rows-[48px_1fr] bg-zinc-950 text-zinc-100">
       <TopBar />
-      <div className="grid grid-cols-[280px_1fr] overflow-hidden">
-        <LeftPanel />   {/* schema + presets */}
-        <div className="grid grid-rows-2 overflow-hidden">
-          <BuilderPanel />   {/* QueryGroup lives here */}
-          <PreviewPanel />   {/* MongoDB code + results */}
+      <div className="grid min-h-0 grid-cols-[280px_1fr] overflow-hidden">
+        <LeftPanel />
+        <div className="grid min-h-0 grid-rows-2 overflow-hidden">
+          <BuilderPanel />
+          <PreviewPanel />
         </div>
       </div>
-    </div>
+    </main>
   )
 }
