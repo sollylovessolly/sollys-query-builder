@@ -3,6 +3,7 @@
 :root {
   --background: #09090b;
   --foreground: #f4f4f5;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -15,6 +16,7 @@
 [data-theme="light"] {
   --background: #f8fafc;
   --foreground: #18181b;
+  color-scheme: light;
 }
 
 body {
@@ -24,46 +26,77 @@ body {
 }
 
 [data-theme="light"] .bg-zinc-950 {
-  background-color: #f8fafc;
+  background-color: #f8fafc !important;
 }
 
 [data-theme="light"] .bg-zinc-900,
 [data-theme="light"] .bg-zinc-900\/40,
 [data-theme="light"] .bg-zinc-900\/60 {
-  background-color: #ffffff;
+  background-color: #ffffff !important;
 }
 
 [data-theme="light"] .bg-zinc-800 {
-  background-color: #f1f5f9;
+  background-color: #f1f5f9 !important;
 }
 
 [data-theme="light"] .bg-zinc-700 {
-  background-color: #e2e8f0;
+  background-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .bg-zinc-950\/60 {
+  background-color: rgb(248 250 252 / 0.8) !important;
 }
 
 [data-theme="light"] .border-zinc-800,
 [data-theme="light"] .border-zinc-700 {
-  border-color: #cbd5e1;
+  border-color: #cbd5e1 !important;
 }
 
 [data-theme="light"] .text-zinc-100,
 [data-theme="light"] .text-zinc-200,
 [data-theme="light"] .text-zinc-300,
 [data-theme="light"] .text-zinc-400 {
-  color: #18181b;
+  color: #18181b !important;
 }
 
 [data-theme="light"] .text-zinc-500,
 [data-theme="light"] .text-zinc-600 {
-  color: #64748b;
+  color: #64748b !important;
+}
+
+[data-theme="light"] .text-blue-300,
+[data-theme="light"] .text-blue-400 {
+  color: #1d4ed8 !important;
+}
+
+[data-theme="light"] .text-purple-300,
+[data-theme="light"] .text-purple-400 {
+  color: #7e22ce !important;
+}
+
+[data-theme="light"] .text-green-400,
+[data-theme="light"] .text-emerald-300 {
+  color: #047857 !important;
+}
+
+[data-theme="light"] .bg-blue-900 {
+  background-color: #dbeafe !important;
+}
+
+[data-theme="light"] .bg-purple-900 {
+  background-color: #f3e8ff !important;
+}
+
+[data-theme="light"] .bg-emerald-950 {
+  background-color: #d1fae5 !important;
 }
 
 [data-theme="light"] .hover\:text-zinc-100:hover,
 [data-theme="light"] .hover\:text-zinc-300:hover {
-  color: #0f172a;
+  color: #0f172a !important;
 }
 
 [data-theme="light"] .hover\:border-zinc-600:hover,
 [data-theme="light"] .hover\:border-zinc-500:hover {
-  border-color: #64748b;
+  border-color: #64748b !important;
 }
