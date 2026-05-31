@@ -15,6 +15,7 @@ export function QueryGroup({ group, isRoot = false }: Props) {
   const updateRule = useQueryStore((state) => state.updateRule)
   const removeNode = useQueryStore((state) => state.removeNode)
   const toggleLogic = useQueryStore((state) => state.toggleLogic)
+  const isEmpty = group.conditions.length === 0
 
   return (
     <div
@@ -51,22 +52,47 @@ export function QueryGroup({ group, isRoot = false }: Props) {
         )}
       </div>
 
-      <div className="space-y-2">
-        {group.conditions.map((condition) => {
-          if (isGroup(condition)) {
-            return <QueryGroup key={condition.id} group={condition} />
-          }
+      {isEmpty ? (
+        <div className="rounded border border-dashed border-amber-900/70 bg-amber-950/20 p-4">
+          <p className="text-sm font-medium text-amber-200">
+            {isRoot ? "Your root query is empty." : "This nested group is empty."}
+          </p>
+          <p className="mt-1 text-xs text-amber-100/60">
+            Add a rule or nested group to make this branch executable again.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={() => addRule(group.id)}
+              className="rounded bg-amber-500 px-2 py-1 text-xs font-semibold text-zinc-950 hover:bg-amber-400"
+            >
+              Add rule
+            </button>
+            <button
+              onClick={() => addGroup(group.id)}
+              className="rounded border border-amber-700 px-2 py-1 text-xs font-semibold text-amber-200 hover:border-amber-500"
+            >
+              Add group
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {group.conditions.map((condition) => {
+            if (isGroup(condition)) {
+              return <QueryGroup key={condition.id} group={condition} />
+            }
 
-          return (
-            <QueryRule
-              key={condition.id}
-              rule={condition}
-              onUpdate={(changes) => updateRule(condition.id, changes)}
-              onDelete={() => removeNode(condition.id)}
-            />
-          )
-        })}
-      </div>
+            return (
+              <QueryRule
+                key={condition.id}
+                rule={condition}
+                onUpdate={(changes) => updateRule(condition.id, changes)}
+                onDelete={() => removeNode(condition.id)}
+              />
+            )
+          })}
+        </div>
+      )}
 
       <div className="mt-3 flex gap-2">
         <button
