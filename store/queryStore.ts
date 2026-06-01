@@ -16,6 +16,7 @@ interface QueryStore {
   addGroup: (groupId: string) => void
   updateRule: (ruleId: string, changes: Partial<Rule>) => void
   removeNode: (nodeId: string) => void
+  moveNode: (groupId: string, activeId: string, overId: string) => void
   loadQuery: (tree: Group) => void
   restoreHistory: (index: number) => void
   clearHistory: () => void
@@ -107,6 +108,24 @@ function removeNodeById(group: Group, nodeId: string): Group {
   }
 }
 
+function moveNodeWithinGroup(group: Group, activeId: string, overId: string): Group {
+  const fromIndex = group.conditions.findIndex((condition) => condition.id === activeId)
+  const toIndex = group.conditions.findIndex((condition) => condition.id === overId)
+
+  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) {
+    return group
+  }
+
+  const nextConditions = [...group.conditions]
+  const [movedNode] = nextConditions.splice(fromIndex, 1)
+  nextConditions.splice(toIndex, 0, movedNode)
+
+  return {
+    ...group,
+    conditions: nextConditions,
+  }
+}
+
 export const useQueryStore = create<QueryStore>((set) => ({
   tree: initialTree,
   history: [],
@@ -146,6 +165,13 @@ export const useQueryStore = create<QueryStore>((set) => ({
       tree: removeNodeById(tree, nodeId),
       history: [tree, ...history],
       collapsedGroupIds: collapsedGroupIds.filter((id) => id !== nodeId),
+      results: [],
+      lastRunAt: null,
+    })),
+  moveNode: (groupId, activeId, overId) =>
+    set(({ tree, history }) => ({
+      tree: updateGroupById(tree, groupId, (group) => moveNodeWithinGroup(group, activeId, overId)),
+      history: [tree, ...history],
       results: [],
       lastRunAt: null,
     })),

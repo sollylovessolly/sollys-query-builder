@@ -1,7 +1,24 @@
 "use client"
 
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+import { ReactNode } from "react"
 import { useQueryStore } from "@/store/queryStore"
-import { Group, isGroup } from "@/types"
+import { Group, Rule, isGroup } from "@/types"
 import { QueryRule } from "./QueryRule"
 
 interface Props {
@@ -9,15 +26,72 @@ interface Props {
   isRoot?: boolean
 }
 
+interface SortableNodeProps {
+  condition: Group | Rule
+  children: ReactNode
+}
+
+function SortableNode({ condition, children }: SortableNodeProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: condition.id,
+  })
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={isDragging ? "relative z-10 opacity-70" : undefined}
+    >
+      <div className="flex items-stretch gap-2">
+        <button
+          className="grid w-7 shrink-0 cursor-grab place-items-center rounded-lg border border-zinc-800 bg-zinc-900/70 text-xs text-zinc-600 active:cursor-grabbing"
+          aria-label="Drag to reorder"
+          {...attributes}
+          {...listeners}
+        >
+          ::
+        </button>
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
+    </div>
+  )
+}
+
 export function QueryGroup({ group, isRoot = false }: Props) {
   const addRule = useQueryStore((state) => state.addRule)
   const addGroup = useQueryStore((state) => state.addGroup)
   const updateRule = useQueryStore((state) => state.updateRule)
   const removeNode = useQueryStore((state) => state.removeNode)
+  const moveNode = useQueryStore((state) => state.moveNode)
   const toggleLogic = useQueryStore((state) => state.toggleLogic)
   const toggleGroupCollapsed = useQueryStore((state) => state.toggleGroupCollapsed)
   const isCollapsed = useQueryStore((state) => state.collapsedGroupIds.includes(group.id))
   const isEmpty = group.conditions.length === 0
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  )
+  const childIds = group.conditions.map((condition) => condition.id)
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+
+    if (!over || active.id === over.id) {
+      return
+    }
+
+    moveNode(group.id, String(active.id), String(over.id))
+  }
 
   return (
     <div
@@ -94,22 +168,31 @@ export function QueryGroup({ group, isRoot = false }: Props) {
           </div>
         </div>
       ) : (
-        <div className="space-y-2">
-          {group.conditions.map((condition) => {
-            if (isGroup(condition)) {
-              return <QueryGroup key={condition.id} group={condition} />
-            }
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={childIds} strategy={verticalListSortingStrategy}>
+            <div className="space-y-2">
+              {group.conditions.map((condition) => {
+                if (isGroup(condition)) {
+                  return (
+                    <SortableNode key={condition.id} condition={condition}>
+                      <QueryGroup group={condition} />
+                    </SortableNode>
+                  )
+                }
 
-            return (
-              <QueryRule
-                key={condition.id}
-                rule={condition}
-                onUpdate={(changes) => updateRule(condition.id, changes)}
-                onDelete={() => removeNode(condition.id)}
-              />
-            )
-          })}
-        </div>
+                return (
+                  <SortableNode key={condition.id} condition={condition}>
+                    <QueryRule
+                      rule={condition}
+                      onUpdate={(changes) => updateRule(condition.id, changes)}
+                      onDelete={() => removeNode(condition.id)}
+                    />
+                  </SortableNode>
+                )
+              })}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       {!isCollapsed && (
