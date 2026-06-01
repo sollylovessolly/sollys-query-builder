@@ -1,12 +1,20 @@
 "use client"
 
+import { useMemo, useState } from "react"
 import { generateMongoDB } from "@/lib/queryGenerator"
 import { validateQuery } from "@/lib/queryValidator"
 import { useQueryStore } from "@/store/queryStore"
 
 const resultColumns = ["id", "name", "age", "country", "status", "purchases", "createdAt"]
+const pageSizes = [5, 10, 25]
+
+type SortDirection = "asc" | "desc"
 
 export function PreviewPanel() {
+  const [sortColumn, setSortColumn] = useState("id")
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
+  const [pageSize, setPageSize] = useState(5)
+  const [currentPage, setCurrentPage] = useState(1)
   const tree = useQueryStore((state) => state.tree)
   const isRunning = useQueryStore((state) => state.isRunning)
   const results = useQueryStore((state) => state.results)
@@ -16,6 +24,41 @@ export function PreviewPanel() {
   const formattedQuery = JSON.stringify(generatedQuery, null, 2)
   const validation = validateQuery(tree)
   const hasExecuted = lastRunAt !== null
+  const sortedResults = useMemo(() => {
+    return [...results].sort((firstRow, secondRow) => {
+      const firstValue = firstRow[sortColumn]
+      const secondValue = secondRow[sortColumn]
+
+      if (typeof firstValue === "number" && typeof secondValue === "number") {
+        return sortDirection === "asc" ? firstValue - secondValue : secondValue - firstValue
+      }
+
+      const comparison = String(firstValue ?? "").localeCompare(String(secondValue ?? ""), undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+
+      return sortDirection === "asc" ? comparison : -comparison
+    })
+  }, [results, sortColumn, sortDirection])
+  const totalPages = Math.max(1, Math.ceil(sortedResults.length / pageSize))
+  const safePage = Math.min(currentPage, totalPages)
+  const startIndex = (safePage - 1) * pageSize
+  const paginatedResults = sortedResults.slice(startIndex, startIndex + pageSize)
+  const visibleStart = sortedResults.length === 0 ? 0 : startIndex + 1
+  const visibleEnd = Math.min(startIndex + pageSize, sortedResults.length)
+
+  function toggleSort(column: string) {
+    setCurrentPage(1)
+
+    if (sortColumn === column) {
+      setSortDirection((direction) => (direction === "asc" ? "desc" : "asc"))
+      return
+    }
+
+    setSortColumn(column)
+    setSortDirection("asc")
+  }
 
   return (
     <section className="app-panel min-h-0 overflow-auto border p-4">
@@ -82,7 +125,29 @@ export function PreviewPanel() {
           <div className="app-animate-panel overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/35">
             <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
               <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Matching rows</h3>
-              <span className="text-xs text-zinc-500">{results.length} row(s)</span>
+              <div className="flex items-center gap-2 text-xs text-zinc-500">
+                <span>
+                  {hasExecuted && results.length > 0
+                    ? `Showing ${visibleStart}-${visibleEnd} of ${results.length}`
+                    : `${results.length} row(s)`}
+                </span>
+                {results.length > 0 && (
+                  <select
+                    value={pageSize}
+                    onChange={(event) => {
+                      setPageSize(Number(event.target.value))
+                      setCurrentPage(1)
+                    }}
+                    className="rounded border border-zinc-800 bg-zinc-900 px-2 py-1 text-xs text-zinc-400"
+                  >
+                    {pageSizes.map((size) => (
+                      <option key={size} value={size}>
+                        {size}/page
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
             </div>
 
             {isRunning ? (
@@ -102,13 +167,21 @@ export function PreviewPanel() {
                     <tr>
                       {resultColumns.map((column) => (
                         <th key={column} className="px-3 py-2 font-medium">
-                          {column}
+                          <button
+                            onClick={() => toggleSort(column)}
+                            className="app-animate-soft flex items-center gap-1 hover:text-zinc-200"
+                          >
+                            {column}
+                            {sortColumn === column && (
+                              <span className="text-rose-300">{sortDirection === "asc" ? "up" : "down"}</span>
+                            )}
+                          </button>
                         </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-800">
-                    {results.map((row) => (
+                    {paginatedResults.map((row) => (
                       <tr key={row.id} className="app-animate-list text-zinc-300">
                         {resultColumns.map((column) => (
                           <td key={column} className="px-3 py-2">
@@ -119,6 +192,30 @@ export function PreviewPanel() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+
+            {results.length > pageSize && (
+              <div className="flex items-center justify-between border-t border-zinc-800 px-3 py-2 text-xs text-zinc-500">
+                <span>
+                  Page {safePage} of {totalPages}
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    disabled={safePage === 1}
+                    className="app-animate-soft rounded border border-zinc-800 px-2 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                    disabled={safePage === totalPages}
+                    className="app-animate-soft rounded border border-zinc-800 px-2 py-1 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             )}
           </div>
