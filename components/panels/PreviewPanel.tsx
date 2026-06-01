@@ -4,7 +4,7 @@ import { generateMongoDB } from "@/lib/queryGenerator"
 import { validateQuery } from "@/lib/queryValidator"
 import { useQueryStore } from "@/store/queryStore"
 
-const resultColumns = ["id", "name", "age", "country", "status", "purchases"]
+const resultColumns = ["id", "name", "age", "country", "status", "purchases", "createdAt"]
 
 export function PreviewPanel() {
   const tree = useQueryStore((state) => state.tree)

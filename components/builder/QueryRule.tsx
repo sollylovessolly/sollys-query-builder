@@ -25,6 +25,7 @@ export function QueryRule({ rule, onUpdate, onDelete }: Props) {
       />
       <RuleValue
         field={rule.field}
+        operator={rule.operator}
         value={rule.value}
         onChange={(value) => onUpdate({ value })}
       />

@@ -3,9 +3,9 @@ import { executeQuery, QueryRow } from "./queryExecutor"
 import { Group } from "../types"
 
 const rows: QueryRow[] = [
-  { id: 1, name: "solly", age: 21, country: "Nigeria", status: "active", purchases: 15 },
-  { id: 2, name: "molly", age: 17, country: "Ghana", status: "active", purchases: 3 },
-  { id: 3, name: "jade", age: 30, country: "UK", status: "inactive", purchases: 22 },
+  { id: 1, name: "solly", age: 21, country: "Nigeria", status: "active", purchases: 15, createdAt: "2026-01-10" },
+  { id: 2, name: "molly", age: 17, country: "Ghana", status: "active", purchases: 3, createdAt: "2026-02-14" },
+  { id: 3, name: "jade", age: 30, country: "UK", status: "inactive", purchases: 22, createdAt: "2025-11-28" },
 ]
 
 describe("executeQuery", () => {
@@ -33,5 +33,20 @@ describe("executeQuery", () => {
     }
 
     expect(executeQuery(tree, rows).map((row) => row.id)).toEqual([1, 3])
+  })
+
+  it("filters rows with advanced operators", () => {
+    const tree: Group = {
+      id: "root",
+      logic: "AND",
+      conditions: [
+        { id: "country-list", field: "country", operator: "in array", value: "Nigeria, UK" },
+        { id: "age-range", field: "age", operator: "between", value: "20..35" },
+        { id: "date", field: "createdAt", operator: "before", value: "2026-02-01" },
+        { id: "regex", field: "name", operator: "regex", value: "^s" },
+      ],
+    }
+
+    expect(executeQuery(tree, rows).map((row) => row.id)).toEqual([1])
   })
 })

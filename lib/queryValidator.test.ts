@@ -36,4 +36,33 @@ describe("validateQuery", () => {
 
     expect(validateQuery(tree).isValid).toBe(false)
   })
+
+  it("validates advanced operators", () => {
+    const tree: Group = {
+      id: "root",
+      logic: "AND",
+      conditions: [
+        { id: "age-range", field: "age", operator: "between", value: "18..30" },
+        { id: "countries", field: "country", operator: "in array", value: "Nigeria, Ghana" },
+        { id: "created", field: "createdAt", operator: "before", value: "2026-06-01" },
+        { id: "null-check", field: "name", operator: "is not null", value: "" },
+      ],
+    }
+
+    expect(validateQuery(tree).isValid).toBe(true)
+  })
+
+  it("rejects invalid advanced operator values", () => {
+    const tree: Group = {
+      id: "root",
+      logic: "AND",
+      conditions: [
+        { id: "bad-range", field: "age", operator: "between", value: "18.." },
+        { id: "bad-date", field: "createdAt", operator: "after", value: "not-a-date" },
+        { id: "bad-regex", field: "name", operator: "regex", value: "[" },
+      ],
+    }
+
+    expect(validateQuery(tree).isValid).toBe(false)
+  })
 })
