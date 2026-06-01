@@ -51,6 +51,40 @@ export function RuleValue({ field, operator, value, onChange }: Props) {
   }
 
   if (operator === "in array") {
+    if (fieldSchema.type === "enum") {
+      const selectedValues = value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+
+      function toggleOption(option: string) {
+        const nextValues = selectedValues.includes(option)
+          ? selectedValues.filter((item) => item !== option)
+          : [...selectedValues, option]
+
+        onChange(nextValues.join(", "))
+      }
+
+      return (
+        <div className="flex flex-wrap gap-1.5">
+          {fieldSchema.options?.map((option) => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => toggleOption(option)}
+              className={`app-animate-soft rounded-md border px-2 py-1 text-xs ${
+                selectedValues.includes(option)
+                  ? "border-rose-800 bg-rose-950/60 text-rose-100"
+                  : "border-zinc-700 bg-zinc-900 text-zinc-500 hover:text-zinc-300"
+              }`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
     return (
       <input
         type="text"

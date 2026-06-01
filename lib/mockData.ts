@@ -3,10 +3,10 @@ import { Schema } from "../types"
 //  defines what fields exist and what type they are
 export const schema: Schema = {
   name: { type: "string", operators: ["equals", "not equals", "contains", "starts with", "regex", "is null", "is not null"] },
-  age: { type: "number", operators: ["equals", "not equals", "greater than", "less than", "between", "in array", "is null", "is not null"] },
+  age: { type: "number", operators: ["equals", "not equals", "greater than", "less than", "between", "is null", "is not null"] },
   country: { type: "enum", operators: ["equals", "not equals", "in array", "is null", "is not null"], options: ["Nigeria", "Ghana", "UK", "USA", "Brazil"] },
   status: { type: "enum", operators: ["equals", "not equals", "in array", "is null", "is not null"], options: ["active", "inactive"] },
-  purchases: { type: "number", operators: ["equals", "not equals", "greater than", "less than", "between", "in array", "is null", "is not null"] },
+  purchases: { type: "number", operators: ["equals", "not equals", "greater than", "less than", "between", "is null", "is not null"] },
   createdAt: { type: "date", operators: ["equals", "before", "after", "between", "is null", "is not null"] },
 }
 
