@@ -1,5 +1,5 @@
-import { schema } from "@/lib/mockData"
-import { Group, Rule, isGroup } from "@/types"
+import { schema } from "./mockData"
+import { Group, Rule, isGroup } from "../types"
 
 export type QueryRow = Record<string, string | number>
 

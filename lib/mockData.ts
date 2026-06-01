@@ -1,4 +1,4 @@
-import { Schema } from "@/types"
+import { Schema } from "../types"
 
 //  defines what fields exist and what type they are
 export const schema: Schema = {

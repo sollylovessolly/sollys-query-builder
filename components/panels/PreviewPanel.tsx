@@ -24,14 +24,14 @@ export function PreviewPanel() {
         <button
           onClick={runQuery}
           disabled={!validation.isValid || isRunning}
-          className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
+          className="app-animate-soft rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
         >
           {isRunning ? "Running..." : "Execute query"}
         </button>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-[240px_1fr]">
-        <div className="rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
+        <div className="app-animate-panel rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Summary</p>
           <dl className="mt-3 space-y-2 text-xs">
             <div className="flex items-center justify-between gap-3">
@@ -61,7 +61,7 @@ export function PreviewPanel() {
 
         <div className="grid min-h-0 gap-3">
           {validation.issues.length > 0 && (
-            <div className="rounded border border-amber-900/70 bg-amber-950/30 p-3">
+            <div className="app-animate-panel rounded border border-amber-900/70 bg-amber-950/30 p-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-amber-300">
                 Validation issues
               </p>
@@ -75,11 +75,11 @@ export function PreviewPanel() {
             </div>
           )}
 
-          <pre className="min-h-40 overflow-auto rounded-lg border border-zinc-800 bg-[#1f1f1f] p-4 font-mono text-xs leading-5 text-emerald-300">
+          <pre className="app-animate-panel min-h-40 overflow-auto rounded-lg border border-zinc-800 bg-[#1f1f1f] p-4 font-mono text-xs leading-5 text-emerald-300">
             <code>{formattedQuery}</code>
           </pre>
 
-          <div className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/35">
+          <div className="app-animate-panel overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/35">
             <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2">
               <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Matching rows</h3>
               <span className="text-xs text-zinc-500">{results.length} row(s)</span>
@@ -109,7 +109,7 @@ export function PreviewPanel() {
                   </thead>
                   <tbody className="divide-y divide-zinc-800">
                     {results.map((row) => (
-                      <tr key={row.id} className="text-zinc-300">
+                      <tr key={row.id} className="app-animate-list text-zinc-300">
                         {resultColumns.map((column) => (
                           <td key={column} className="px-3 py-2">
                             {row[column]}

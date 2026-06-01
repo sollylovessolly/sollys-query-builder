@@ -93,19 +93,19 @@ export function TopBar() {
         />
         <button
           onClick={() => inputRef.current?.click()}
-          className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100"
+          className="app-animate-soft rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100"
         >
           Import JSON
         </button>
         <button
           onClick={exportQuery}
-          className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100"
+          className="app-animate-soft rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-400 hover:border-zinc-600 hover:text-zinc-100"
         >
           Export JSON
         </button>
         <button
           onClick={toggleTheme}
-          className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-400 hover:border-rose-800 hover:text-zinc-100"
+          className="app-animate-soft rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-zinc-400 hover:border-rose-800 hover:text-zinc-100"
           aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
         >
           {theme === "dark" ? "Light" : "Dark"}

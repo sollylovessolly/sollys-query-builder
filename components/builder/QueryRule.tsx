@@ -13,7 +13,7 @@ interface Props {
 
 export function QueryRule({ rule, onUpdate, onDelete }: Props) {
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/80 p-2">
+    <div className="app-animate-soft flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800/80 p-2 hover:border-zinc-600">
       <RuleField
         value={rule.field}
         onChange={(changes) => onUpdate(changes)}
@@ -29,7 +29,7 @@ export function QueryRule({ rule, onUpdate, onDelete }: Props) {
         onChange={(value) => onUpdate({ value })}
       />
 
-      <button onClick={onDelete} className="ml-auto text-sm text-zinc-600 hover:text-red-400">
+      <button onClick={onDelete} className="app-animate-soft ml-auto text-sm text-zinc-600 hover:text-red-400">
         x
       </button>
     </div>

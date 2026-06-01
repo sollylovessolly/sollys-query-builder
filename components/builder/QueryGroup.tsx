@@ -37,18 +37,18 @@ function SortableNode({ condition, children }: SortableNodeProps) {
   })
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition ?? "transform 180ms ease",
   }
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={isDragging ? "relative z-10 opacity-70" : undefined}
+      className={`app-animate-list ${isDragging ? "relative z-10 opacity-70" : ""}`}
     >
       <div className="flex items-stretch gap-2">
         <button
-          className="grid w-7 shrink-0 cursor-grab place-items-center rounded-lg border border-zinc-800 bg-zinc-900/70 text-xs text-zinc-600 active:cursor-grabbing"
+          className="app-animate-soft grid w-7 shrink-0 cursor-grab place-items-center rounded-lg border border-zinc-800 bg-zinc-900/70 text-xs text-zinc-600 active:cursor-grabbing"
           aria-label="Drag to reorder"
           {...attributes}
           {...listeners}
@@ -95,14 +95,14 @@ export function QueryGroup({ group, isRoot = false }: Props) {
 
   return (
     <div
-      className={`rounded-lg border bg-[#171717]/50 p-3 ${
+      className={`app-animate-panel rounded-lg border bg-[#171717]/50 p-3 ${
         isRoot ? "border-zinc-700" : "ml-4 border-zinc-800 border-l-2 border-l-rose-800"
       }`}
     >
       <div className="mb-3 flex items-center gap-2">
         <button
           onClick={() => toggleGroupCollapsed(group.id)}
-          className="rounded border border-zinc-800 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
+          className="app-animate-soft rounded border border-zinc-800 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-600 hover:text-zinc-300"
           aria-label={isCollapsed ? "Expand group" : "Collapse group"}
         >
           {isCollapsed ? "+" : "-"}
@@ -110,7 +110,7 @@ export function QueryGroup({ group, isRoot = false }: Props) {
         <span className="text-xs text-zinc-500">Match</span>
         <button
           onClick={() => group.logic === "OR" && toggleLogic(group.id)}
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+          className={`app-animate-soft rounded-full px-3 py-1 text-xs font-semibold ${
             group.logic === "AND" ? "bg-rose-950/70 text-rose-200" : "bg-zinc-800 text-zinc-500"
           }`}
         >
@@ -118,7 +118,7 @@ export function QueryGroup({ group, isRoot = false }: Props) {
         </button>
         <button
           onClick={() => group.logic === "AND" && toggleLogic(group.id)}
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+          className={`app-animate-soft rounded-full px-3 py-1 text-xs font-semibold ${
             group.logic === "OR" ? "bg-rose-950/70 text-rose-200" : "bg-zinc-800 text-zinc-500"
           }`}
         >
@@ -140,12 +140,12 @@ export function QueryGroup({ group, isRoot = false }: Props) {
       </div>
 
       {isCollapsed ? (
-        <div className="rounded-lg border border-dashed border-zinc-800 bg-zinc-950/60 px-3 py-2 text-xs text-zinc-500">
+        <div className="app-animate-panel rounded-lg border border-dashed border-zinc-800 bg-zinc-950/60 px-3 py-2 text-xs text-zinc-500">
           Group collapsed. {group.conditions.length} nested node
           {group.conditions.length === 1 ? "" : "s"} hidden.
         </div>
       ) : isEmpty ? (
-        <div className="rounded-lg border border-dashed border-amber-900/70 bg-amber-950/20 p-4">
+        <div className="app-animate-panel rounded-lg border border-dashed border-amber-900/70 bg-amber-950/20 p-4">
           <p className="text-sm font-medium text-amber-200">
             {isRoot ? "Your root query is empty." : "This nested group is empty."}
           </p>
@@ -155,13 +155,13 @@ export function QueryGroup({ group, isRoot = false }: Props) {
           <div className="mt-3 flex gap-2">
             <button
               onClick={() => addRule(group.id)}
-              className="rounded bg-amber-500 px-2 py-1 text-xs font-semibold text-zinc-950 hover:bg-amber-400"
+              className="app-animate-soft rounded bg-amber-500 px-2 py-1 text-xs font-semibold text-zinc-950 hover:bg-amber-400"
             >
               Add rule
             </button>
             <button
               onClick={() => addGroup(group.id)}
-              className="rounded border border-amber-700 px-2 py-1 text-xs font-semibold text-amber-200 hover:border-amber-500"
+              className="app-animate-soft rounded border border-amber-700 px-2 py-1 text-xs font-semibold text-amber-200 hover:border-amber-500"
             >
               Add group
             </button>
@@ -199,13 +199,13 @@ export function QueryGroup({ group, isRoot = false }: Props) {
         <div className="mt-3 flex gap-2">
           <button
             onClick={() => addRule(group.id)}
-            className="rounded border border-dashed border-zinc-700 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
+            className="app-animate-soft rounded border border-dashed border-zinc-700 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
           >
             + Add rule
           </button>
           <button
             onClick={() => addGroup(group.id)}
-            className="rounded border border-dashed border-zinc-700 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
+            className="app-animate-soft rounded border border-dashed border-zinc-700 px-2 py-1 text-xs text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
           >
             + Add group
           </button>

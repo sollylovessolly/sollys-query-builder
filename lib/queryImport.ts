@@ -1,5 +1,5 @@
-import { schema } from "@/lib/mockData"
-import { Group, Rule } from "@/types"
+import { schema } from "./mockData"
+import { Group, Rule } from "../types"
 
 interface ParseResult {
   ok: boolean

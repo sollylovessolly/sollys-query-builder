@@ -33,7 +33,7 @@ export function LeftPanel() {
     <aside className="app-panel flex min-h-0 flex-col border p-4">
       <section className="shrink-0">
         <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Data source</p>
-        <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
+        <div className="app-animate-panel mt-3 rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-sm font-semibold text-zinc-100">Users</h2>
@@ -62,7 +62,7 @@ export function LeftPanel() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`rounded-md px-2 py-1.5 text-xs font-medium ${
+            className={`app-animate-soft rounded-md px-2 py-1.5 text-xs font-medium ${
               activeTab === tab ? "bg-rose-950/50 text-rose-200" : "text-zinc-500 hover:text-zinc-300"
             }`}
           >
@@ -81,7 +81,7 @@ export function LeftPanel() {
 
             <div className="mt-3 space-y-3">
               {fieldEntries.map(([fieldName, field]) => (
-                <article key={fieldName} className="rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
+                <article key={fieldName} className="app-animate-list rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="text-sm font-medium text-zinc-100">{fieldName}</h3>
                     <span className="rounded-lg bg-zinc-800 px-2 py-1 text-xs text-zinc-400">
@@ -123,7 +123,7 @@ export function LeftPanel() {
                 <button
                   key={preset.id}
                   onClick={() => loadQuery(preset.tree)}
-                  className="w-full rounded-lg border border-zinc-800 bg-zinc-950/35 p-3 text-left hover:border-rose-900/80"
+                  className="app-animate-soft w-full rounded-lg border border-zinc-800 bg-zinc-950/35 p-3 text-left hover:border-rose-900/80"
                 >
                   <span className="block text-sm font-medium text-zinc-200">{preset.name}</span>
                   <span className="mt-1 block text-xs leading-5 text-zinc-500">{preset.description}</span>
@@ -142,13 +142,13 @@ export function LeftPanel() {
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">History</p>
               {history.length > 0 && (
-                <button onClick={clearHistory} className="text-xs text-zinc-600 hover:text-zinc-300">
+                <button onClick={clearHistory} className="app-animate-soft text-xs text-zinc-600 hover:text-zinc-300">
                   Clear
                 </button>
               )}
             </div>
 
-            <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
+            <div className="app-animate-panel mt-3 rounded-lg border border-zinc-800 bg-zinc-950/35 p-3">
               {history.length === 0 ? (
                 <p className="text-xs leading-5 text-zinc-500">
                   Query changes will appear here for quick restore.
@@ -162,7 +162,7 @@ export function LeftPanel() {
                       <button
                         key={`${snapshot.id}-${index}`}
                         onClick={() => restoreHistory(index)}
-                        className="flex w-full items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-left hover:border-rose-900/80"
+                        className="app-animate-soft flex w-full items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-left hover:border-rose-900/80"
                       >
                         <span>
                           <span className="block text-xs font-medium text-zinc-300">
