@@ -35,6 +35,7 @@ export function LeftPanel() {
     () =>
       queryPresets.map((preset) => ({
         ...preset,
+        sourceName: getDataSource(preset.dataSourceId).name,
         nodeCount: countNodes(preset.tree),
       })),
     [],
@@ -156,10 +157,15 @@ export function LeftPanel() {
               {presetSummaries.map((preset) => (
                 <button
                   key={preset.id}
-                  onClick={() => loadQuery(preset.tree)}
+                  onClick={() => loadQuery(preset.tree, preset.dataSourceId)}
                   className="app-animate-soft app-sidebar-card w-full rounded-lg border p-3 text-left hover:border-rose-900/80"
                 >
-                  <span className="block text-sm font-medium text-gray-200">{preset.name}</span>
+                  <span className="flex items-center justify-between gap-3">
+                    <span className="block text-sm font-medium text-gray-200">{preset.name}</span>
+                    <span className="rounded-md border border-gray-800 bg-gray-900 px-2 py-1 text-[10px] uppercase tracking-wide text-gray-500">
+                      {preset.sourceName}
+                    </span>
+                  </span>
                   <span className="mt-1 block text-xs leading-5 text-gray-500">{preset.description}</span>
                   <span className="mt-2 block text-[11px] text-gray-600">
                     {preset.tree.logic} / {preset.nodeCount} node
