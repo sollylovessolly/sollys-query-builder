@@ -69,8 +69,8 @@ export function TopBar() {
   return (
     <header className="app-topbar flex items-center justify-between px-5 py-9">
       <div className="flex items-center gap-3">
-        <div className="grid size-8 place-items-center text-yellow-300">
-          <Star size={18} fill="currentColor" />
+        <div className="grid size-8 place-items-center text-yellow-700">
+          <Star size={24} fill="yellow" />
         </div>
         <h1 className="text-[15px] font-semibold tracking-tight text-[var(--topbar-text)]">
           Sollys Query Builder

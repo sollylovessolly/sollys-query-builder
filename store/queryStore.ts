@@ -19,7 +19,7 @@ interface QueryStore {
   updateRule: (ruleId: string, changes: Partial<Rule>) => void
   removeNode: (nodeId: string) => void
   moveNode: (groupId: string, activeId: string, overId: string) => void
-  loadQuery: (tree: Group) => void
+  loadQuery: (tree: Group, dataSourceId?: string) => void
   restoreHistory: (index: number) => void
   clearHistory: () => void
   toggleGroupCollapsed: (groupId: string) => void
@@ -163,13 +163,13 @@ export const useQueryStore = create<QueryStore>((set) => ({
       const source = getDataSource(dataSourceId)
 
       return {
-      tree: updateGroupById(tree, groupId, (group) => ({
-        ...group,
-        conditions: [...group.conditions, createRule(source.schema)],
-      })),
-      history: [tree, ...history],
-      results: [],
-      lastRunAt: null,
+        tree: updateGroupById(tree, groupId, (group) => ({
+          ...group,
+          conditions: [...group.conditions, createRule(source.schema)],
+        })),
+        history: [tree, ...history],
+        results: [],
+        lastRunAt: null,
       }
     }),
   addGroup: (groupId) =>
@@ -177,13 +177,13 @@ export const useQueryStore = create<QueryStore>((set) => ({
       const source = getDataSource(dataSourceId)
 
       return {
-      tree: updateGroupById(tree, groupId, (group) => ({
-        ...group,
-        conditions: [...group.conditions, createGroup(source.schema)],
-      })),
-      history: [tree, ...history],
-      results: [],
-      lastRunAt: null,
+        tree: updateGroupById(tree, groupId, (group) => ({
+          ...group,
+          conditions: [...group.conditions, createGroup(source.schema)],
+        })),
+        history: [tree, ...history],
+        results: [],
+        lastRunAt: null,
       }
     }),
   updateRule: (ruleId, changes) =>
@@ -208,14 +208,19 @@ export const useQueryStore = create<QueryStore>((set) => ({
       results: [],
       lastRunAt: null,
     })),
-  loadQuery: (nextTree) =>
-    set(({ tree, history }) => ({
-      tree: structuredClone(nextTree),
-      history: [tree, ...history],
-      collapsedGroupIds: [],
-      results: [],
-      lastRunAt: null,
-    })),
+  loadQuery: (nextTree, nextDataSourceId) =>
+    set(({ tree, history, dataSourceId }) => {
+      const source = nextDataSourceId ? getDataSource(nextDataSourceId) : getDataSource(dataSourceId)
+
+      return {
+        dataSourceId: source.id,
+        tree: structuredClone(nextTree),
+        history: [tree, ...history],
+        collapsedGroupIds: [],
+        results: [],
+        lastRunAt: null,
+      }
+    }),
   restoreHistory: (index) =>
     set(({ tree, history }) => {
       const restoredTree = history[index]
