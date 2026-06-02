@@ -7,8 +7,10 @@ import { useQueryStore } from "@/store/queryStore"
 import { Group, isGroup } from "@/types"
 
 const tabs = ["Schema", "Presets", "History"] as const
+const presetFilters = ["all", "users", "orders", "products"] as const
 
 type SidebarTab = (typeof tabs)[number]
+type PresetFilter = (typeof presetFilters)[number]
 
 function countNodes(group: Group): number {
   return group.conditions.reduce((count, condition) => {
@@ -22,6 +24,7 @@ function countNodes(group: Group): number {
 
 export function LeftPanel() {
   const [activeTab, setActiveTab] = useState<SidebarTab>("Schema")
+  const [presetFilter, setPresetFilter] = useState<PresetFilter>("all")
   const history = useQueryStore((state) => state.history)
   const dataSourceId = useQueryStore((state) => state.dataSourceId)
   const setDataSource = useQueryStore((state) => state.setDataSource)
@@ -40,6 +43,13 @@ export function LeftPanel() {
       })),
     [],
   )
+  const filteredPresets = useMemo(() => {
+    if (presetFilter === "all") {
+      return presetSummaries
+    }
+
+    return presetSummaries.filter((preset) => preset.dataSourceId === presetFilter)
+  }, [presetFilter, presetSummaries])
   const historySummaries = useMemo(
     () =>
       recentHistory.map((snapshot, index) => ({
@@ -150,11 +160,27 @@ export function LeftPanel() {
           <section>
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Presets</p>
-              <span className="text-xs text-gray-600">{queryPresets.length} saved</span>
+              <span className="text-xs text-gray-600">{filteredPresets.length} shown</span>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {presetFilters.map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setPresetFilter(filter)}
+                  className={`app-animate-soft rounded-md border px-2 py-1 text-[11px] font-medium capitalize ${
+                    presetFilter === filter
+                      ? "border-rose-800 bg-rose-950/50 text-rose-200"
+                      : "border-gray-800 bg-gray-900/50 text-gray-500 hover:text-gray-300"
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
             </div>
 
             <div className="mt-3 space-y-2">
-              {presetSummaries.map((preset) => (
+              {filteredPresets.map((preset) => (
                 <button
                   key={preset.id}
                   onClick={() => loadQuery(preset.tree, preset.dataSourceId)}
