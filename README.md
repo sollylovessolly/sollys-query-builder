@@ -6,7 +6,7 @@ The app lets users build database/API-style filters without writing raw syntax. 
 
 ## Live Demo
 
-- Live URL: (https://sollys-query-builder.vercel.app/)
+- Live URL: https://sollys-query-builder.vercel.app/
 - Demo video: https://www.loom.com/share/cb05377bc1c8487bbddd8da923d3102d
 - Repository: https://github.com/sollylovessolly/sollys-query-builder
 ## Features
