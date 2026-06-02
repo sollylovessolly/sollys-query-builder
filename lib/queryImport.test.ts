@@ -7,7 +7,25 @@ describe("parseImportedQuery", () => {
     const result = parseImportedQuery(JSON.stringify(queryPresets[0].tree))
 
     expect(result.ok).toBe(true)
+    expect(result.dataSourceId).toBe("users")
     expect(result.tree?.id).toBe(queryPresets[0].tree.id)
+  })
+
+  it("accepts source-aware exported query JSON", () => {
+    const ordersPreset = queryPresets.find((preset) => preset.dataSourceId === "orders")
+
+    expect(ordersPreset).toBeDefined()
+
+    const result = parseImportedQuery(
+      JSON.stringify({
+        dataSourceId: ordersPreset?.dataSourceId,
+        tree: ordersPreset?.tree,
+      }),
+    )
+
+    expect(result.ok).toBe(true)
+    expect(result.dataSourceId).toBe("orders")
+    expect(result.tree?.id).toBe(ordersPreset?.tree.id)
   })
 
   it("rejects malformed JSON", () => {

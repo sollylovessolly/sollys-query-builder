@@ -1,9 +1,10 @@
-import { schema } from "./mockData"
+import { defaultDataSourceId, getDataSource } from "./mockData"
 import { Group, Rule } from "../types"
 
 interface ParseResult {
   ok: boolean
   tree?: Group
+  dataSourceId?: string
   error?: string
 }
 
@@ -14,7 +15,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
 
-function isRule(value: unknown): value is Rule {
+function isRule(value: unknown, dataSourceId: string): value is Rule {
   if (!isRecord(value)) {
     return false
   }
@@ -28,11 +29,16 @@ function isRule(value: unknown): value is Rule {
     return false
   }
 
-  const fieldSchema = schema[value.field]
+  const fieldSchema = getDataSource(dataSourceId).schema[value.field]
   return Boolean(fieldSchema && fieldSchema.operators.includes(value.operator))
 }
 
-function validateGroup(value: unknown, depth = 0, nodeCount = { value: 0 }): value is Group {
+function validateGroup(
+  value: unknown,
+  dataSourceId: string,
+  depth = 0,
+  nodeCount = { value: 0 },
+): value is Group {
   if (!isRecord(value)) {
     return false
   }
@@ -59,18 +65,23 @@ function validateGroup(value: unknown, depth = 0, nodeCount = { value: 0 }): val
     nodeCount.value += 1
 
     if ("conditions" in condition) {
-      return validateGroup(condition, depth + 1, nodeCount)
+      return validateGroup(condition, dataSourceId, depth + 1, nodeCount)
     }
 
-    return isRule(condition)
+    return isRule(condition, dataSourceId)
   })
 }
 
 export function parseImportedQuery(json: string): ParseResult {
   try {
     const parsed: unknown = JSON.parse(json)
+    const dataSourceId =
+      isRecord(parsed) && typeof parsed.dataSourceId === "string"
+        ? getDataSource(parsed.dataSourceId).id
+        : defaultDataSourceId
+    const tree = isRecord(parsed) && "tree" in parsed ? parsed.tree : parsed
 
-    if (!validateGroup(parsed)) {
+    if (!validateGroup(tree, dataSourceId)) {
       return {
         ok: false,
         error: "Imported JSON must be a valid query group with known fields and operators.",
@@ -79,7 +90,8 @@ export function parseImportedQuery(json: string): ParseResult {
 
     return {
       ok: true,
-      tree: parsed,
+      dataSourceId,
+      tree,
     }
   } catch {
     return {
