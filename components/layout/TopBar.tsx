@@ -10,6 +10,7 @@ export function TopBar() {
   const inputRef = useRef<HTMLInputElement>(null)
   const [message, setMessage] = useState("")
   const tree = useQueryStore((state) => state.tree)
+  const dataSourceId = useQueryStore((state) => state.dataSourceId)
   const loadQuery = useQueryStore((state) => state.loadQuery)
   const theme = useUiStore((state) => state.theme)
   const setTheme = useUiStore((state) => state.setTheme)
@@ -29,7 +30,11 @@ export function TopBar() {
   }, [theme])
 
   function exportQuery() {
-    const blob = new Blob([JSON.stringify(tree, null, 2)], { type: "application/json" })
+    const payload = {
+      dataSourceId,
+      tree,
+    }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
 
@@ -58,7 +63,7 @@ export function TopBar() {
         return
       }
 
-      loadQuery(result.tree)
+      loadQuery(result.tree, result.dataSourceId)
       setMessage("Imported query JSON")
       event.target.value = ""
     }
