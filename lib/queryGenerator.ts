@@ -1,5 +1,5 @@
-import { schema } from "./mockData"
-import { Group, Rule, isGroup } from "../types"
+import { schema as defaultSchema } from "./mockData"
+import { Group, Rule, Schema, isGroup } from "../types"
 
 type MongoCondition = Record<string, unknown>
 
@@ -7,7 +7,7 @@ function escapeRegex(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
 
-function coerceValue(rule: Rule) {
+function coerceValue(rule: Rule, schema: Schema) {
   const fieldSchema = schema[rule.field]
 
   if (fieldSchema?.type === "number") {
@@ -18,7 +18,7 @@ function coerceValue(rule: Rule) {
   return rule.value
 }
 
-function parseListValue(rule: Rule) {
+function parseListValue(rule: Rule, schema: Schema) {
   return rule.value
     .split(",")
     .map((value) => value.trim())
@@ -33,7 +33,7 @@ function parseListValue(rule: Rule) {
     })
 }
 
-function parseBetweenValue(rule: Rule) {
+function parseBetweenValue(rule: Rule, schema: Schema) {
   const [start = "", end = ""] = rule.value.split("..")
 
   if (schema[rule.field]?.type === "number") {
@@ -46,8 +46,8 @@ function parseBetweenValue(rule: Rule) {
   return { start, end }
 }
 
-function generateRuleCondition(rule: Rule): MongoCondition {
-  const value = coerceValue(rule)
+function generateRuleCondition(rule: Rule, schema: Schema): MongoCondition {
+  const value = coerceValue(rule, schema)
 
   switch (rule.operator) {
     case "equals":
@@ -63,11 +63,11 @@ function generateRuleCondition(rule: Rule): MongoCondition {
     case "after":
       return { [rule.field]: { $gt: value } }
     case "between": {
-      const { start, end } = parseBetweenValue(rule)
+      const { start, end } = parseBetweenValue(rule, schema)
       return { [rule.field]: { $gte: start, $lte: end } }
     }
     case "in array":
-      return { [rule.field]: { $in: parseListValue(rule) } }
+      return { [rule.field]: { $in: parseListValue(rule, schema) } }
     case "contains":
       return { [rule.field]: { $regex: escapeRegex(String(value)), $options: "i" } }
     case "starts with":
@@ -83,15 +83,15 @@ function generateRuleCondition(rule: Rule): MongoCondition {
   }
 }
 
-export function generateMongoDB(group: Group): object {
+export function generateMongoDB(group: Group, schema: Schema = defaultSchema): object {
   const logic = group.logic === "AND" ? "$and" : "$or"
 
   const conditions = group.conditions.map((condition) => {
     if (isGroup(condition)) {
-      return generateMongoDB(condition)
+      return generateMongoDB(condition, schema)
     }
 
-    return generateRuleCondition(condition)
+    return generateRuleCondition(condition, schema)
   })
 
   return { [logic]: conditions }

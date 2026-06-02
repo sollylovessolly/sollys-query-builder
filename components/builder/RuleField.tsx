@@ -1,6 +1,8 @@
 "use client"
 
-import { schema } from "@/lib/mockData"
+import { memo } from "react"
+import { getDataSource } from "@/lib/mockData"
+import { useQueryStore } from "@/store/queryStore"
 import { Rule } from "@/types"
 
 interface Props {
@@ -8,7 +10,10 @@ interface Props {
   onChange: (changes: Pick<Rule, "field" | "operator" | "value">) => void
 }
 
-export function RuleField({ value, onChange }: Props) {
+function RuleFieldComponent({ value, onChange }: Props) {
+  const dataSourceId = useQueryStore((state) => state.dataSourceId)
+  const schema = getDataSource(dataSourceId).schema
+
   return (
     <select
       value={value}
@@ -32,3 +37,5 @@ export function RuleField({ value, onChange }: Props) {
     </select>
   )
 }
+
+export const RuleField = memo(RuleFieldComponent)

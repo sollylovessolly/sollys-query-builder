@@ -1,6 +1,8 @@
 "use client"
 
-import { schema } from "@/lib/mockData"
+import { memo } from "react"
+import { getDataSource } from "@/lib/mockData"
+import { useQueryStore } from "@/store/queryStore"
 
 interface Props {
   field: string
@@ -14,8 +16,18 @@ function splitBetween(value: string) {
   return { start, end }
 }
 
-export function RuleValue({ field, operator, value, onChange }: Props) {
+function RuleValueComponent({ field, operator, value, onChange }: Props) {
+  const dataSourceId = useQueryStore((state) => state.dataSourceId)
+  const schema = getDataSource(dataSourceId).schema
   const fieldSchema = schema[field]
+  if (!fieldSchema) {
+    return (
+      <span className="rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1 text-sm text-zinc-500">
+        invalid field
+      </span>
+    )
+  }
+
   const isDate = fieldSchema.type === "date"
 
   if (operator === "is null" || operator === "is not null") {
@@ -123,3 +135,5 @@ export function RuleValue({ field, operator, value, onChange }: Props) {
     />
   )
 }
+
+export const RuleValue = memo(RuleValueComponent)

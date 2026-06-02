@@ -1,17 +1,19 @@
 import { create } from "zustand"
 import { executeQuery, QueryRow } from "@/lib/queryExecutor"
-import { mockDataset, schema } from "@/lib/mockData"
+import { defaultDataSourceId, getDataSource } from "@/lib/mockData"
 import { validateQuery } from "@/lib/queryValidator"
-import { Group, Rule, isGroup } from "@/types"
+import { Group, Rule, Schema, isGroup } from "@/types"
 import { nanoid } from "nanoid"
 
 interface QueryStore {
+  dataSourceId: string
   tree: Group
   history: Group[]
   collapsedGroupIds: string[]
   isRunning: boolean
   results: QueryRow[]
   lastRunAt: number | null
+  setDataSource: (dataSourceId: string) => void
   addRule: (groupId: string) => void
   addGroup: (groupId: string) => void
   updateRule: (ruleId: string, changes: Partial<Rule>) => void
@@ -25,9 +27,12 @@ interface QueryStore {
   runQuery: () => void
 }
 
-const firstField = Object.keys(schema)[0]
+function getFirstField(schema: Schema) {
+  return Object.keys(schema)[0]
+}
 
-function createRule(): Rule {
+function createRule(schema: Schema): Rule {
+  const firstField = getFirstField(schema)
   const fieldSchema = schema[firstField]
 
   return {
@@ -38,18 +43,20 @@ function createRule(): Rule {
   }
 }
 
-function createGroup(): Group {
+function createGroup(schema: Schema): Group {
   return {
     id: nanoid(),
     logic: "AND",
-    conditions: [createRule()],
+    conditions: [createRule(schema)],
   }
 }
 
-const initialTree: Group = {
-  id: "root",
-  logic: "AND",
-  conditions: [createRule()],
+function createInitialTree(schema: Schema): Group {
+  return {
+    id: "root",
+    logic: "AND",
+    conditions: [createRule(schema)],
+  }
 }
 
 function updateGroupById(
@@ -127,32 +134,58 @@ function moveNodeWithinGroup(group: Group, activeId: string, overId: string): Gr
 }
 
 export const useQueryStore = create<QueryStore>((set) => ({
-  tree: initialTree,
+  dataSourceId: defaultDataSourceId,
+  tree: createInitialTree(getDataSource(defaultDataSourceId).schema),
   history: [],
   collapsedGroupIds: [],
   isRunning: false,
   results: [],
   lastRunAt: null,
+  setDataSource: (dataSourceId) =>
+    set(({ tree, dataSourceId: currentDataSourceId }) => {
+      if (dataSourceId === currentDataSourceId) {
+        return {}
+      }
+
+      const source = getDataSource(dataSourceId)
+
+      return {
+        dataSourceId: source.id,
+        tree: createInitialTree(source.schema),
+        history: [tree],
+        collapsedGroupIds: [],
+        results: [],
+        lastRunAt: null,
+      }
+    }),
   addRule: (groupId) =>
-    set(({ tree, history }) => ({
+    set(({ tree, history, dataSourceId }) => {
+      const source = getDataSource(dataSourceId)
+
+      return {
       tree: updateGroupById(tree, groupId, (group) => ({
         ...group,
-        conditions: [...group.conditions, createRule()],
+        conditions: [...group.conditions, createRule(source.schema)],
       })),
       history: [tree, ...history],
       results: [],
       lastRunAt: null,
-    })),
+      }
+    }),
   addGroup: (groupId) =>
-    set(({ tree, history }) => ({
+    set(({ tree, history, dataSourceId }) => {
+      const source = getDataSource(dataSourceId)
+
+      return {
       tree: updateGroupById(tree, groupId, (group) => ({
         ...group,
-        conditions: [...group.conditions, createGroup()],
+        conditions: [...group.conditions, createGroup(source.schema)],
       })),
       history: [tree, ...history],
       results: [],
       lastRunAt: null,
-    })),
+      }
+    }),
   updateRule: (ruleId, changes) =>
     set(({ tree, history }) => ({
       tree: updateRuleById(tree, ruleId, changes),
@@ -220,12 +253,13 @@ export const useQueryStore = create<QueryStore>((set) => ({
     set({ isRunning: true })
 
     window.setTimeout(() => {
-      set(({ tree }) => {
-        const validation = validateQuery(tree)
+      set(({ tree, dataSourceId }) => {
+        const source = getDataSource(dataSourceId)
+        const validation = validateQuery(tree, source.schema)
 
         return {
           isRunning: false,
-          results: validation.isValid ? executeQuery(tree, mockDataset) : [],
+          results: validation.isValid ? executeQuery(tree, source.rows, source.schema) : [],
           lastRunAt: Date.now(),
         }
       })

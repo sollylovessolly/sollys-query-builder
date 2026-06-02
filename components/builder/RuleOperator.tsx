@@ -1,6 +1,8 @@
 "use client"
 
-import { schema } from "@/lib/mockData"
+import { memo } from "react"
+import { getDataSource } from "@/lib/mockData"
+import { useQueryStore } from "@/store/queryStore"
 
 interface Props {
   field: string
@@ -8,7 +10,9 @@ interface Props {
   onChange: (operator: string) => void
 }
 
-export function RuleOperator({ field, value, onChange }: Props) {
+function RuleOperatorComponent({ field, value, onChange }: Props) {
+  const dataSourceId = useQueryStore((state) => state.dataSourceId)
+  const schema = getDataSource(dataSourceId).schema
   const fieldSchema = schema[field]
 
   return (
@@ -17,7 +21,7 @@ export function RuleOperator({ field, value, onChange }: Props) {
       onChange={(event) => onChange(event.target.value)}
       className="rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1 text-sm text-rose-300"
     >
-      {fieldSchema.operators.map((operator) => (
+      {fieldSchema?.operators.map((operator) => (
         <option key={operator} value={operator}>
           {operator}
         </option>
@@ -25,3 +29,5 @@ export function RuleOperator({ field, value, onChange }: Props) {
     </select>
   )
 }
+
+export const RuleOperator = memo(RuleOperatorComponent)

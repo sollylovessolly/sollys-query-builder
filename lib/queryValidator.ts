@@ -1,5 +1,5 @@
-import { schema } from "./mockData"
-import { Group, Rule, isGroup } from "../types"
+import { schema as defaultSchema } from "./mockData"
+import { Group, Rule, Schema, isGroup } from "../types"
 
 export type ValidationSeverity = "error" | "warning"
 
@@ -35,7 +35,7 @@ function isValidDate(value: string) {
   return value.trim() !== "" && Number.isFinite(Date.parse(value))
 }
 
-function validateRule(rule: Rule, path: string): ValidationIssue[] {
+function validateRule(rule: Rule, path: string, schema: Schema): ValidationIssue[] {
   const fieldSchema = schema[rule.field]
 
   if (!fieldSchema) {
@@ -124,7 +124,7 @@ function validateRule(rule: Rule, path: string): ValidationIssue[] {
   return issues
 }
 
-function validateGroup(group: Group, path: string): ValidationIssue[] {
+function validateGroup(group: Group, path: string, schema: Schema): ValidationIssue[] {
   const issues: ValidationIssue[] = []
 
   if (group.conditions.length === 0) {
@@ -135,18 +135,18 @@ function validateGroup(group: Group, path: string): ValidationIssue[] {
     const childPath = `${path}.${index + 1}`
 
     if (isGroup(condition)) {
-      issues.push(...validateGroup(condition, childPath))
+      issues.push(...validateGroup(condition, childPath, schema))
       return
     }
 
-    issues.push(...validateRule(condition, childPath))
+    issues.push(...validateRule(condition, childPath, schema))
   })
 
   return issues
 }
 
-export function validateQuery(group: Group): ValidationResult {
-  const issues = validateGroup(group, "root")
+export function validateQuery(group: Group, schema: Schema = defaultSchema): ValidationResult {
+  const issues = validateGroup(group, "root", schema)
 
   return {
     isValid: issues.every((issue) => issue.severity !== "error"),

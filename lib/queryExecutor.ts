@@ -1,9 +1,9 @@
-import { schema } from "./mockData"
-import { Group, Rule, isGroup } from "../types"
+import { schema as defaultSchema } from "./mockData"
+import { Group, Rule, Schema, isGroup } from "../types"
 
 export type QueryRow = Record<string, string | number | null>
 
-function coerceRuleValue(rule: Rule) {
+function coerceRuleValue(rule: Rule, schema: Schema) {
   const fieldSchema = schema[rule.field]
 
   if (fieldSchema?.type === "number") {
@@ -14,7 +14,7 @@ function coerceRuleValue(rule: Rule) {
   return rule.value
 }
 
-function parseListValue(rule: Rule) {
+function parseListValue(rule: Rule, schema: Schema) {
   return rule.value
     .split(",")
     .map((value) => value.trim())
@@ -29,7 +29,7 @@ function parseListValue(rule: Rule) {
     })
 }
 
-function parseBetweenValue(rule: Rule) {
+function parseBetweenValue(rule: Rule, schema: Schema) {
   const [start = "", end = ""] = rule.value.split("..")
 
   if (schema[rule.field]?.type === "number") {
@@ -42,9 +42,9 @@ function parseBetweenValue(rule: Rule) {
   return { start, end }
 }
 
-function matchRule(row: QueryRow, rule: Rule) {
+function matchRule(row: QueryRow, rule: Rule, schema: Schema) {
   const rowValue = row[rule.field]
-  const ruleValue = coerceRuleValue(rule)
+  const ruleValue = coerceRuleValue(rule, schema)
 
   switch (rule.operator) {
     case "equals":
@@ -60,7 +60,7 @@ function matchRule(row: QueryRow, rule: Rule) {
     case "after":
       return String(rowValue) > String(ruleValue)
     case "between": {
-      const { start, end } = parseBetweenValue(rule)
+      const { start, end } = parseBetweenValue(rule, schema)
 
       if (schema[rule.field]?.type === "number") {
         return Number(rowValue) >= Number(start) && Number(rowValue) <= Number(end)
@@ -69,7 +69,7 @@ function matchRule(row: QueryRow, rule: Rule) {
       return String(rowValue) >= String(start) && String(rowValue) <= String(end)
     }
     case "in array":
-      return rowValue === null || rowValue === undefined ? false : parseListValue(rule).includes(rowValue)
+      return rowValue === null || rowValue === undefined ? false : parseListValue(rule, schema).includes(rowValue)
     case "contains":
       return String(rowValue).toLowerCase().includes(String(ruleValue).toLowerCase())
     case "starts with":
@@ -85,22 +85,22 @@ function matchRule(row: QueryRow, rule: Rule) {
   }
 }
 
-function matchGroup(row: QueryRow, group: Group): boolean {
+function matchGroup(row: QueryRow, group: Group, schema: Schema): boolean {
   if (group.conditions.length === 0) {
     return false
   }
 
   const checks = group.conditions.map((condition) => {
     if (isGroup(condition)) {
-      return matchGroup(row, condition)
+      return matchGroup(row, condition, schema)
     }
 
-    return matchRule(row, condition)
+    return matchRule(row, condition, schema)
   })
 
   return group.logic === "AND" ? checks.every(Boolean) : checks.some(Boolean)
 }
 
-export function executeQuery(group: Group, rows: QueryRow[]) {
-  return rows.filter((row) => matchGroup(row, group))
+export function executeQuery(group: Group, rows: QueryRow[], schema: Schema = defaultSchema) {
+  return rows.filter((row) => matchGroup(row, group, schema))
 }

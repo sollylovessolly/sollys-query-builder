@@ -25,3 +25,11 @@ export interface FieldSchema {
 export interface Schema {
   [fieldName: string]: FieldSchema
 }
+
+export interface DataSource {
+  id: string
+  name: string
+  description: string
+  schema: Schema
+  rows: Record<string, string | number | null>[]
+}
